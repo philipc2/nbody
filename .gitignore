@@ -1,0 +1,186 @@
+# ------------------
+# General
+# ------------------
+
+# Compiled object files
+*.o
+*.obj
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.stackdump
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+
+# ------------------
+# IDE and Editor Configurations
+# ------------------
+
+# VSCode
+.vscode/
+
+# IntelliJ IDEA
+.idea/
+
+# PyCharm
+*.idea/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Other IDEs and editors
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# Rope
+.ropeproject
+
+# Pyenv
+.python-version
+
+# ------------------
+# C++ Specific
+# ------------------
+
+# C++ build directories
+/build/
+/bin/
+/lib/
+
+# CMake specific files
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+CTestTestfile.cmake
+
+# Makefile generated files
+*.d
+
+# ------------------
+# Rust Specific
+# ------------------
+
+# Rust build directory
+/target/
+
+# Cargo specific files
+**/*.rs.bk
+
+# Optional Cargo.lock
+# For binaries: It's optional to include Cargo.lock
+# For libraries: It's recommended to exclude Cargo.lock
+Cargo.lock
+
+# ------------------
+# Python Specific
+# ------------------
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+.venv/
+.env/
+venv/
+ENV/
+env/
+bin/
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+include/
+man/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+pip-selfcheck.json
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Sphinx documentation
+docs/_build/
+
+# ------------------
+# Frameworks and Tools
+# ------------------
+
+# Django stuff
+*.pot
+*.log
+
+# PyInstaller
+*.manifest
+*.spec
+
+# ------------------
+# Additional Files and Directories
+# ------------------
+
+# Sphinx documentation
+docs/_build/
+
+# ------------------
+# Others
+# ------------------
+
+# Temporary files created by various tools
+*.tmp
+*.temp
