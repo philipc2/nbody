@@ -27,37 +27,27 @@ The ["The Counter-Intuitive Rise of Python in Scientific Computing"](https://cer
 
 The repository includes the following basic N-Body implementations sourced from the [Programming Language Benchmarks](https://programming-language-benchmarks.vercel.app/) website:
 
-- **C++**
-  - Basic implementation without leveraging SIMD or parallelism.
+- **C++**: [(1.cpp)](https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/1.cpp)
 
-- **Rust**
-  - Basic implementation without leveraging SIMD or parallelism.
+- **Rust**: [(1.rs)](https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/1.rs)
 
-- **Python**
-  - A pure Python implementation
-  - Serves as a baseline for comparing the performance of optimized Python approaches.
+- **Python**: [(2.py)](https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.py)
+
+While there are faster implementations in Rust and C++, I chose to go with the simpler implementations that do not leverage SIMD or parallelism.
 
 ### Enhanced Implementations
 
-To explore the performance enhancements achievable with modern tools and libraries, three new N-Body implementations have been developed:
-
 1. **NumPy Implementation**
-   - **Description**: Utilizes NumPy's optimized array operations to handle numerical computations efficiently.
-   - **Advantages**:
-     - Leverages vectorized operations for faster calculations.
-     - Reduces the overhead of Python loops.
+   - Utilizes NumPy's optimized array operations to handle numerical computations efficiently.
+
 
 2. **Numba Implementation**
-   - **Description**: Applies Numba's JIT compilation to accelerate Python code execution.
-   - **Advantages**:
-     - Transforms Python functions into optimized machine code at runtime.
-     - Achieves performance closer to compiled languages like C++ and Rust.
+   - Applies Numba's JIT compilation to accelerate Python code execution.
+
 
 3. **Rust-Python Binding**
-   - **Description**: Creates Python bindings to the Rust implementation using Maturin and PyO3.
-   - **Advantages**:
-     - Combines Rust's high performance with Python's ease of use.
-     - Allows seamless integration of Rust code into Python workflows.
+   - Creates Python bindings to the Rust implementation using Maturin and PyO3.
+
 
 
 
