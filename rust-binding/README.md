@@ -1,0 +1,5 @@
+## Usage
+
+```
+maturin develop
+```
