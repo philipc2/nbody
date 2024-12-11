@@ -47,6 +47,23 @@ While there are faster implementations in Rust and C++, I chose to go with the s
 
 3. **Rust-Python Binding**
    - Creates Python bindings to the Rust implementation using Maturin and PyO3.
+  
+
+## Results
+
+### Local Machine
+
+Execution Time (in seconds)
+
+| Implementation/ N Iterations | 500,000 | 5,000,000 | 50,000,000 |
+|-----------------------------|---------|-----------|------------|
+| C++                         | 0       | 0         | 0          |
+| Rust                        | 0.146      | 0.583         |  5.035         |
+| Rust Binding                | 0.145       | 0.753         | 6.854          |
+| Python                      | 1.997       | 19.615         | N/A          |
+| Numba                       | 0.688       | 2.082         | 16.349          |
+| NumPy                       | 11.534       | N/A        | N/A          |
+
 
 
 
