@@ -1,4 +1,4 @@
-# Accelerating N-Body Python Code 
+# Accelerating N-Body in Python
 
 
 ## Overview
