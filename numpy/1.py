@@ -6,127 +6,115 @@ PI = 3.14159265358979323
 SOLAR_MASS = 4 * PI * PI
 DAYS_PER_YEAR = 365.24
 
-# Original data
+# Original body definitions
 bodies_data = {
-    "sun": ([0.0, 0.0, 0.0], [0.0, 0.0, 0.0], SOLAR_MASS),
+    "sun": (
+        np.array([0.0, 0.0, 0.0]),
+        np.array([0.0, 0.0, 0.0]),
+        SOLAR_MASS,
+    ),
     "jupiter": (
-        [4.84143144246472090e00, -1.16032004402742839e00, -1.03622044471123109e-01],
-        [
-            1.66007664274403694e-03 * DAYS_PER_YEAR,
-            7.69901118419740425e-03 * DAYS_PER_YEAR,
-            -6.90460016972063023e-05 * DAYS_PER_YEAR,
-        ],
+        np.array([4.84143144246472090e00, -1.16032004402742839e00, -1.03622044471123109e-01]),
+        np.array([1.66007664274403694e-03 * DAYS_PER_YEAR,
+                  7.69901118419740425e-03 * DAYS_PER_YEAR,
+                  -6.90460016972063023e-05 * DAYS_PER_YEAR]),
         9.54791938424326609e-04 * SOLAR_MASS,
     ),
     "saturn": (
-        [8.34336671824457987e00, 4.12479856412430479e00, -4.03523417114321381e-01],
-        [
-            -2.76742510726862411e-03 * DAYS_PER_YEAR,
-            4.99852801234917238e-03 * DAYS_PER_YEAR,
-            2.30417297573763929e-05 * DAYS_PER_YEAR,
-        ],
+        np.array([8.34336671824457987e00, 4.12479856412430479e00, -4.03523417114321381e-01]),
+        np.array([-2.76742510726862411e-03 * DAYS_PER_YEAR,
+                  4.99852801234917238e-03 * DAYS_PER_YEAR,
+                  2.30417297573763929e-05 * DAYS_PER_YEAR]),
         2.85885980666130812e-04 * SOLAR_MASS,
     ),
     "uranus": (
-        [1.28943695621391310e01, -1.51111514016986312e01, -2.23307578892655734e-01],
-        [
-            2.96460137564761618e-03 * DAYS_PER_YEAR,
-            2.37847173959480950e-03 * DAYS_PER_YEAR,
-            -2.96589568540237556e-05 * DAYS_PER_YEAR,
-        ],
+        np.array([1.28943695621391310e01, -1.51111514016986312e01, -2.23307578892655734e-01]),
+        np.array([2.96460137564761618e-03 * DAYS_PER_YEAR,
+                  2.37847173959480950e-03 * DAYS_PER_YEAR,
+                  -2.96589568540237556e-05 * DAYS_PER_YEAR]),
         4.36624404335156298e-05 * SOLAR_MASS,
     ),
     "neptune": (
-        [1.53796971148509165e01, -2.59193146099879641e01, 1.79258772950371181e-01],
-        [
-            2.68067772490389322e-03 * DAYS_PER_YEAR,
-            1.62824170038242295e-03 * DAYS_PER_YEAR,
-            -9.51592254519715870e-05 * DAYS_PER_YEAR,
-        ],
+        np.array([1.53796971148509165e01, -2.59193146099879641e01, 1.79258772950371181e-01]),
+        np.array([2.68067772490389322e-03 * DAYS_PER_YEAR,
+                  1.62824170038242295e-03 * DAYS_PER_YEAR,
+                  -9.51592254519715870e-05 * DAYS_PER_YEAR]),
         5.15138902046611451e-05 * SOLAR_MASS,
     ),
 }
 
-# Convert to arrays
+# Extract arrays of positions, velocities, and masses
 names = list(bodies_data.keys())
 N_BODIES = len(names)
 
-pos = np.zeros((N_BODIES, 3), dtype=np.float64)
-vel = np.zeros((N_BODIES, 3), dtype=np.float64)
-mass = np.zeros(N_BODIES, dtype=np.float64)
+positions = np.array([bodies_data[name][0] for name in names], dtype=np.float64)  # shape (N,3)
+velocities = np.array([bodies_data[name][1] for name in names], dtype=np.float64) # shape (N,3)
+masses = np.array([bodies_data[name][2] for name in names], dtype=np.float64)      # shape (N,)
 
-for i, name in enumerate(names):
-    p, v, m = bodies_data[name]
-    pos[i] = p
-    vel[i] = v
-    mass[i] = m
+def advance(dt, positions, velocities, masses):
+    # Compute all pairwise differences
+    i_idx, j_idx = np.triu_indices(N_BODIES, k=1)  # pairs (i<j)
+    diff = positions[i_idx] - positions[j_idx]  # (M, 3), M = N*(N-1)/2
 
+    dist_sq = np.sum(diff**2, axis=1)
+    dist = np.sqrt(dist_sq)
 
-def advance(dt, pos, vel, mass):
-    n = len(mass)
-    for i in range(n):
-        for j in range(i + 1, n):
-            dx = pos[i, 0] - pos[j, 0]
-            dy = pos[i, 1] - pos[j, 1]
-            dz = pos[i, 2] - pos[j, 2]
+    # Magnitude of the force component
+    mag = dt / (dist_sq * dist)
 
-            d_squared = dx * dx + dy * dy + dz * dz
-            distance = math.sqrt(d_squared)
-            mag = dt / (d_squared * distance)
+    # Update velocities
+    # Each pair affects both i and j
+    mass_j = masses[j_idx]
+    mass_i = masses[i_idx]
 
-            m2_mag = mass[j] * mag
-            vel[i, 0] -= dx * m2_mag
-            vel[i, 1] -= dy * m2_mag
-            vel[i, 2] -= dz * m2_mag
+    # Velocity changes for i due to j
+    vel_change_i = (diff * (mass_j * mag)[:, None])
+    # Velocity changes for j due to i (note sign inversion of diff)
+    vel_change_j = (-diff * (mass_i * mag)[:, None])
 
-            m1_mag = mass[i] * mag
-            vel[j, 0] += dx * m1_mag
-            vel[j, 1] += dy * m1_mag
-            vel[j, 2] += dz * m1_mag
+    # Accumulate changes:
+    # We add changes to velocities in a summed manner using np.add.at because multiple pairs involve the same body.
+    np.add.at(velocities, i_idx, -vel_change_i)
+    np.add.at(velocities, j_idx, -vel_change_j)
 
-    # Update positions
-    pos += dt * vel
+    # Advance positions
+    positions += dt * velocities
 
 
-def report_energy(pos, vel, mass):
-    e = 0.0
-    n = len(mass)
-    for i in range(n):
-        e += (
-            0.5
-            * mass[i]
-            * (vel[i, 0] * vel[i, 0] + vel[i, 1] * vel[i, 1] + vel[i, 2] * vel[i, 2])
-        )
-        for j in range(i + 1, n):
-            dx = pos[i, 0] - pos[j, 0]
-            dy = pos[i, 1] - pos[j, 1]
-            dz = pos[i, 2] - pos[j, 2]
-            distance = math.sqrt(dx * dx + dy * dy + dz * dz)
-            e -= (mass[i] * mass[j]) / distance
+def report_energy(positions, velocities, masses):
+    # Kinetic energy
+    e = 0.5 * np.sum(masses * np.sum(velocities**2, axis=1))
+    
+    # Potential energy
+    i_idx, j_idx = np.triu_indices(N_BODIES, k=1)
+    diff = positions[i_idx] - positions[j_idx]
+    dist = np.sqrt(np.sum(diff**2, axis=1))
+    e -= np.sum((masses[i_idx] * masses[j_idx]) / dist)
+    
     print(f"{e:.9f}")
 
 
-def offset_momentum(ref_name, pos, vel, mass):
-    px = py = pz = 0.0
-    n = len(mass)
-    for i in range(n):
-        px -= vel[i, 0] * mass[i]
-        py -= vel[i, 1] * mass[i]
-        pz -= vel[i, 2] * mass[i]
-
-    # Find index of the reference body
+def offset_momentum(ref_name, positions, velocities, masses):
+    # Find reference body index
     ref_idx = names.index(ref_name)
-    vel[ref_idx, 0] = px / SOLAR_MASS
-    vel[ref_idx, 1] = py / SOLAR_MASS
-    vel[ref_idx, 2] = pz / SOLAR_MASS
+    
+    # Total momentum
+    px = np.sum(velocities[:,0] * masses)
+    py = np.sum(velocities[:,1] * masses)
+    pz = np.sum(velocities[:,2] * masses)
+    
+    # Adjust reference velocity to offset total momentum
+    velocities[ref_idx,0] = -px / SOLAR_MASS
+    velocities[ref_idx,1] = -py / SOLAR_MASS
+    velocities[ref_idx,2] = -pz / SOLAR_MASS
 
 
 def main(n, ref="sun"):
-    offset_momentum(ref, pos, vel, mass)
-    report_energy(pos, vel, mass)
+    offset_momentum(ref, positions, velocities, masses)
+    report_energy(positions, velocities, masses)
     for _ in range(n):
-        advance(0.01, pos, vel, mass)
-    report_energy(pos, vel, mass)
+        advance(0.01, positions, velocities, masses)
+    report_energy(positions, velocities, masses)
 
 
 if __name__ == "__main__":

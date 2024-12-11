@@ -62,7 +62,7 @@ for i, name in enumerate(names):
     mass[i] = m
 
 
-@njit(cache=False)
+@njit(cache=True)
 def advance(dt, pos, vel, mass):
     n = mass.shape[0]
     for i in range(n):
@@ -92,7 +92,7 @@ def advance(dt, pos, vel, mass):
         pos[i, 2] += dt * vel[i, 2]
 
 
-@njit(cache=False)
+@njit(cache=True)
 def report_energy(pos, vel, mass):
     e = 0.0
     n = mass.shape[0]
@@ -108,7 +108,7 @@ def report_energy(pos, vel, mass):
     return e
 
 
-@njit(cache=False)
+@njit(cache=True)
 def offset_momentum(ref_idx, pos, vel, mass):
     px = 0.0
     py = 0.0
